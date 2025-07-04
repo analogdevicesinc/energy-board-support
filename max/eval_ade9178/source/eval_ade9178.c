@@ -55,6 +55,19 @@ int32_t EvbInit(void **phEvb, ADI_EVB_CONFIG *pConfig)
     {
         status = EvbInitUart(&pEvb->hUart, &pConfig->uartConfig);
     }
+#if APP_CFG_ENABLE_HW_CRC == 1
+    if (status == 0)
+    {
+        status = EvbInitCrc(&pEvb->hCrc, &pConfig->crcConfig);
+    }
+#endif
+
+#if APP_CFG_ENABLE_NVM == 1
+    if (status == 0)
+    {
+        status = EvbInitNvm(&pEvb->hNvm);
+    }
+#endif
 
 #if APP_CFG_ENABLE_SYSTEM_TIMER == 1
     if (status == 0)

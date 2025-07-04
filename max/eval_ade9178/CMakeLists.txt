@@ -27,10 +27,12 @@ set(BOARD_SRC ${MAX32670_ROOT_DIR}/source/eval_ade9178.c
 				${MAX32670_ROOT_DIR}/source/eval_ade9178_spi.c
                 ${MAX32670_ROOT_DIR}/source/eval_ade9178_gpio.c
                 ${MAX32670_ROOT_DIR}/source/eval_ade9178_uart.c
+                ${MAX32670_ROOT_DIR}/source/eval_ade9178_flc.c
                 ${MAX32670_ROOT_DIR}/../source/max3267x_spi_config.c
                 ${MAX32670_ROOT_DIR}/../source/max3267x_uart_config.c
                 ${MAX32670_ROOT_DIR}/../source/max3267x_dma_config.c
                 ${MAX32670_ROOT_DIR}/../source/max3267x_timer_config.c
+                ${MAX32670_ROOT_DIR}/../source/max3267x_flc_config.c
                 
 )
 
