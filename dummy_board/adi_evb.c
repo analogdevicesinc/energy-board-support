@@ -36,7 +36,7 @@ int32_t EvbResetAdcs(void)
     return 0;
 }
 
-int32_t EvbStartAdeSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes)
+int32_t EvbAdeSpiTransmitAsync(void *hEvb, uint8_t *pData, uint32_t numBytes)
 {
     (void)hEvb;     /* Dummy use of argument */
     (void)pData;    /* Dummy use of argument */
@@ -51,7 +51,7 @@ int32_t EvbResetAde(void)
     return 0;
 }
 
-int32_t EvbStartAdeSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes)
+int32_t EvbAdeSpiReceiveAsync(void *hEvb, uint8_t *pData, uint32_t numBytes)
 {
     (void)hEvb;     /* Dummy use of argument */
     (void)pData;    /* Dummy use of argument */
@@ -60,14 +60,14 @@ int32_t EvbStartAdeSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes)
     return 0;
 }
 
-int32_t EvbStartAdeSpiTxRx(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes,
-                           uint32_t timeOutCount)
+int32_t EvbAdeSpiTransceive(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes,
+                            uint32_t timeoutCount)
 {
     (void)hEvb;         /* Dummy use of argument */
     (void)pTxData;      /* Dummy use of argument */
     (void)pRxData;      /* Dummy use of argument */
     (void)numBytes;     /* Dummy use of argument */
-    (void)timeOutCount; /* Dummy use of argument */
+    (void)timeoutCount; /* Dummy use of argument */
 
     return 0;
 }
@@ -87,7 +87,7 @@ int32_t EvbDelayMs(uint32_t delayMs)
     return 0;
 }
 
-int32_t EvbStartHostUartTx(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbHostUartTransmitAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
 {
     /* Not needed for ADC service.
     Only to transfer data to host*/
@@ -118,17 +118,34 @@ int32_t EvbGetPinState(uint32_t port, uint32_t flag)
     return 0;
 }
 
-int32_t EvbSetAdeWfsUartBaudrate(void *hEvb, uint32_t baudRate)
+int32_t EvbAdeWfsUartSetBaudrate(void *hEvb, uint32_t baudRate)
 {
     (void)hEvb;     /* Dummy use of argument */
     (void)baudRate; /* Dummy use of argument */
     return 0;
 }
-int32_t EvbStartAdeWfsUartRx(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbAdeWfsUartReceiveAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
 {
     (void)hEvb;     /* Dummy use of argument */
     (void)pBuffer;  /* Dummy use of argument */
     (void)numBytes; /* Dummy use of argument */
+    return 0;
+}
+
+int32_t EvbAdeSpiTransceiveAsync(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes)
+{
+    (void)hEvb;     /* Dummy use of argument */
+    (void)pTxData;  /* Dummy use of argument */
+    (void)pRxData;  /* Dummy use of argument */
+    (void)numBytes; /* Dummy use of argument */
+
+    return 0;
+}
+
+int32_t EvbEnableDreadyIrq(uint8_t enable)
+{
+    (void)enable; /* Dummy use of argument */
+
     return 0;
 }
 

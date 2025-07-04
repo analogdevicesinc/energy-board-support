@@ -17,39 +17,27 @@ extern "C" {
 #endif
 
 /*============= I N C L U D E S =============*/
-#include "adi_crc.h"
+
 #include <stdint.h>
 
 /**
- * @brief       Initialise uart
- * @param[in]   phCrc -  Pointer to uart instance struct
- * @return      status
+ * @brief Calculates CRC for the given data
+ * @param[in]  hEvb - Evb handle obtained from EvbInit
+ * @param[in]  pData  - pointer to the data for which CRC needs to be calculated
+ * @param[in]  numBytes  - number of bytes to be considered for CRC calculation
+ *
+ * @return  CRC value
  */
-ADI_CRC_RESULT EvbInitCrc(void **phCrc);
+int32_t EvbCrcCalculate(void *hEvb, uint8_t *pData, uint32_t numBytes);
 
 /**
- * @brief       Set crc config
- * @param[in]   pData -  Pointer to crc data struct
- * @return      status
+ * @brief Gets the CRC value
+ * @param[in] hEvb - pointer to Evb handle
+ * @param[out]  pData - pointer to destination data buffer
+ *
+ * @return 0 on success, error code otherwise
  */
-int32_t EvbCrcSetConfig(ADI_CRC_DATA *pData);
-
-/**
- * @brief       Calculate Crc
- * @param[in]   pCrcData -  Pointer to crc data struct
- * @param[in]   pData -  Pointer to data for which crc must be calculated
- * @param[in]   offset -  offset value
- * @param[in]   numBytes -  num of data bytes
- */
-void EvbCalculateCrc(ADI_CRC_DATA *pCrcData, uint8_t *pData, uint16_t offset, uint32_t numBytes);
-
-/**
- * @brief       Set crc config
- * @param[in]   hCrc -  Crc handle
- * @param[in]   pData -  Pointer to crc value
- * @return      status
- */
-ADI_CRC_RESULT EvbGetCrc(ADI_CRC_HANDLE hCrc, uint32_t *pData);
+int32_t EvbCrcGetValue(void *hEvb, uint32_t *pData);
 
 /**
  * @brief       Clear crc interrupt
@@ -59,7 +47,7 @@ void EvbCrcClearInterrupt(void);
 /**
  * @brief       Reset Crc module
  */
-void EvbResetHw(void);
+void EvbCrcReset(void);
 
 #ifdef __cplusplus
 }

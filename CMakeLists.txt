@@ -30,11 +30,11 @@ endif()
 include(CMakePrintHelpers)
 
 if(BUILD_TARGET MATCHES "stm32h573zi")
-	add_subdirectory(${BSP_ROOT_DIR}/stm/crane_app_mcu
+	add_subdirectory(${BSP_ROOT_DIR}/stm/app_mcu_h5
 		 			 ${CMAKE_BINARY_DIR}/stm32h573zi)
 	target_link_libraries(board_support INTERFACE stm32h573zi)
 elseif(BUILD_TARGET MATCHES "stm32h735ig")
-	add_subdirectory(${BSP_ROOT_DIR}/stm/h7_mcu_board
+	add_subdirectory(${BSP_ROOT_DIR}/stm/app_mcu_h7
 		 			 ${CMAKE_BINARY_DIR}/stm32h735ig)
 	target_link_libraries(board_support INTERFACE stm32h735ig)
 elseif(BUILD_TARGET MATCHES "stm32h563zi")
