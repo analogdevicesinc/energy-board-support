@@ -130,6 +130,8 @@ extern "C" {
 #define CF1_PIN_ALT_FUNC GPIO_AF1_TIM2
 /** CF IRQ Number */
 #define CF1_TIM_IRQn TIM2_IRQn
+/**  Timer */
+#define BOARD_CFG_LP_TIMER LPTIM2
 #else
 /**  Timer */
 #define BOARD_CFG_SYSTEM_TIMER     TIM2

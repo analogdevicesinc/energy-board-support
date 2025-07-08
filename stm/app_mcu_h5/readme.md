@@ -24,14 +24,15 @@ To build and use the source code in this repository for communicating with the A
 1. **Install Required Tools:**
    - Download and install CMake and Ninja, and add them to your system PATH.
    - Download and install STM32CubeCLT and ensure the STM32H5 HAL drivers are available.
+   - Download the STM32H5 HAL drivers from the [STM32H5 HAL Drivers](https://github.com/STMicroelectronics/STM32CubeH5)
 
 2. **Generate the Binary:**
    - Open a command prompt and navigate to the project directory.
    - Run the following commands (replace `<Path to STM32H5xx_HAL_Driver folder>` with the actual path):
      ```sh
-     cmake -S . -B build\Release -G "Ninja" -DSDK=<Path to STM32H5xx_HAL_Driver folder>
-     # For example:
-     # -DSDK=C:\STM32Cube\Repository\STM32Cube_FW_H5_V1.3.0\Drivers\STM32H5xx_HAL_Driver
+      cmake -S . -B build/Release -G "Ninja" -DSDK=<Path to STM32H5xx_HAL_Driver folder> -DEVB=<name of the evaluation board> -DBOARD_SUPPORT_DIR=<Path to Board Support Directory>
+     # For example: -DSDK=C:\STM32Cube\Repository\STM32Cube_FW_H5_V1.3.0\Drivers\STM32H5xx_HAL_Driver -DEVB="app_mcu_h5"
+
      cmake --build build\Release
      ```
    - The output `.hex` file will be generated in the `build\Release` directory.
@@ -44,12 +45,24 @@ You can flash the generated `.hex` file to the APP MCU board using a hardware de
    - Connect the debugger’s SWD interface to the corresponding pins on the APP MCU Board.
    - Plug the debugger into your PC.
 
-2. **Flash the Hex File:**
+2. **Open a Terminal Program:**
+   - Use a terminal application such as PuTTY or Tera Term.
+   - Configure the connection with the following parameters:
+     ```
+     Baud rate    : 115200
+     Data bits    : 8
+     Parity       : None
+     Stop bits    : 1
+     Flow control : None
+     ```
+
+3. **Flash the Hex File:**
    - Use STM32CubeProgrammer GUI to flash the `.hex` file.
    - Alternatively, use the command line to load firmware using STMCubeProg:
      ```sh
      STM32_Programmer_CLI.exe -c port=SWD freq=4000 -d <path to .hex file> -g
      ```
+
 
 ### Debugging with VS Code Workspace
 

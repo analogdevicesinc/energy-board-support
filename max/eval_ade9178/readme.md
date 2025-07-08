@@ -19,53 +19,58 @@ The EVAL-ADE9178 evaluation kit uses a MAX32670 Host MCU, which communicates wit
 ## Building the Firmware
 
 1. **Install Required Tools:**
-   - **CMake:** Download and install CMake from the [official website](https://cmake.org/download/).
+   - **CMake:** Download and install from the [CMake website](https://cmake.org/download/).
+   - **Ninja:** Download from the [Ninja releases page](https://github.com/ninja-build/ninja/releases).
 
-   - Clone or download the [MAX3267x SDK (v2024_10)](https://github.com/analogdevicesinc/msdk/tree/v2024_10) from GitHub.
-   - Follow the SDK's installation instructions and set up the required environment 
+2. **Get the MAX3267x SDK:**
+   - Download the [automatic installer](https://analogdevicesinc.github.io/msdk//USERGUIDE/#installation) for the MAX3267x SDK.
+   - Follow the installation instructions in the user guide and configure any required environment variables (such as the `SDK` path).
 
 3. **Configure the Build:**
-   - Open a terminal and navigate to the firmware project directory (e.g., [ade9178 example]()).
+   - Open a terminal and navigate to the firmware project directory where `CMakeLists.txt` is present.
 
      ```sh
-     cmake -S . -B build\Release -G "Ninja" -DSDK=<Path to MAX32670 SDK>
-     #For ex, -DSDK=C:\MAximSDK\
-
+     cmake -S . -B build/Release -G "Ninja" -DSDK=<Path to MAX3267x SDK> -DEVB=<name of the evaluation board> -DBOARD_SUPPORT_DIR=<Path to Board Support Directory>
+     # For example: -DSDK=C:/MaximSDK/ -DEVB="eval_ade9178"
      ```
 
 4. **Build the Firmware:**
    - Compile the project:
      ```sh
-     cmake --build build\Release
-
+     cmake --build build/Release
      ```
-   - The output `.hex` file will be generated in the build directory.
+   - The output `.hex` file will be generated in the `build/Release` directory.
 
 
 ## Programming the Firmware onto the Board
 
-You can flash the generated `.hex` file to the MAX32670 board using a MAX32625PICO debug adapter and OpenOCD.
+To flash the generated `.hex` file to the MAX32670 board, use a MAX32625PICO debug adapter and OpenOCD.
 
 1. **Connect the Debugger:**
    - Attach the MAX32625PICO ribbon cable to the SWD header on the EVAL-ADE9178 board.
-   - Connect the MAX32625PICO to your PC via USB.
+   - Connect the MAX32625PICO to your PC via USB. A DAPLINK drive should appear in your file explorer.
 
-2. **Get the Debug Adapter Unique ID:**
-   - After connecting, a DAPLINK drive should appear in File Explorer.
-   - Open `DETAILS.TXT` on the DAPLINK drive and copy the Unique ID.
-
-3. **Flash the Hex File:**
-   - Open a terminal or command prompt.
-   - Run the following command, replacing `<YOUR_UNIQUE_ID>` and the path to your `.hex` file:
-     ```sh
-     "C:\MaximSDK\Tools\OpenOCD\openocd.exe" -s "C:\MaximSDK\Tools\OpenOCD\scripts" -f interface\cmsis-dap.cfg -f target\max32670.cfg -c "cmsis_dap_serial <YOUR_UNIQUE_ID>; program \"C:/path/to/your/firmware.hex\" reset exit"
+2. **Open a Terminal Program:**
+   - Use a terminal application such as PuTTY or Tera Term.
+   - Configure the connection with the following parameters:
+     ```
+     Baud rate    : 115200
+     Data bits    : 8
+     Parity       : None
+     Stop bits    : 1
+     Flow control : None
      ```
 
----
+4. **Flash the Firmware:**
+   - Open a terminal or command prompt.
+   - Run the following command:
+     ```sh
+     "C:\MaximSDK\Tools\OpenOCD\openocd.exe" -s "C:\MaximSDK\Tools\OpenOCD\scripts" -f interface/cmsis-dap.cfg -f interface\cmsis-dap.cfg -f target\max32670.cfg -c "program \"cmd_format_example.hex\" reset exit"
+     ```
 
 ### Debugging with VS Code Workspace
 
-The example projects may come with  a pre-configured VS Code workspace for easy building and debugging.
+The example projects may come with a pre-configured VS Code workspace for easy building and debugging.
 
 1. The default CMake preset is loaded automatically when you open the workspace.
 2. If not, open the command palette, search for `CMake: Select Configure Preset`, and choose the appropriate preset.
@@ -77,5 +82,4 @@ The example projects may come with  a pre-configured VS Code workspace for easy 
 ## References
 - [ADE9178 Product Page](https://www.analog.com/en/products/ade9178.html)
 - [MAX32670 Product Page](https://www.maximintegrated.com/en/products/microcontrollers/MAX32670.html)
-- [MAX3267x SDK GitHub](https://github.com/analogdevicesinc/msdk/tree/v2024_10)
 - [MAX32625PICO](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/max32625pico.html#eb-documentation)
