@@ -90,7 +90,7 @@ int32_t EvbInitUart(void **phUart, ADI_EVB_UART_CONFIG *pConfig)
     return status;
 }
 
-int32_t EvbStartAdeWfsUartRx(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbAdeWfsUartReceiveAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
 {
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.wfsUartInfo;
     int32_t status = -1;
@@ -103,7 +103,7 @@ int32_t EvbStartAdeWfsUartRx(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
     return status;
 }
 
-int32_t EvbSetAdeWfsUartBaudrate(void *hEvb, uint32_t baudRate)
+int32_t EvbAdeWfsUartSetBaudrate(void *hEvb, uint32_t baudRate)
 {
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.wfsUartInfo;
     int32_t status = -1;
@@ -114,23 +114,29 @@ int32_t EvbSetAdeWfsUartBaudrate(void *hEvb, uint32_t baudRate)
 
     return status;
 }
-int32_t EvbStartHostUartRx(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbHostUartReceive(void *hEvb, uint8_t *pBuffer, uint32_t numBytes, uint32_t timeoutCount)
 {
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.hostUartInfo;
     int32_t status = -1;
+    uint32_t waitCount = 0;
     pUartInfo->isRxComplete = 0;
     if (hEvb != NULL)
     {
         status = MaxStartUartRx(pUartInfo, pBuffer, numBytes);
-        while (pUartInfo->isRxComplete == 0)
+        while ((pUartInfo->isRxComplete == 0) && (waitCount < timeoutCount))
         {
+            waitCount++;
+        }
+        if (waitCount == timeoutCount)
+        {
+            status = 1;
         }
     }
 
     return status;
 }
 
-int32_t EvbStartHostUartRxAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbHostUartReceiveAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
 {
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.hostUartInfo;
     int32_t status = -1;
@@ -147,22 +153,28 @@ int32_t EvbStartHostUartRxAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
     return status;
 }
 
-int32_t EvbStartHostUartTx(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbHostUartTransmit(void *hEvb, uint8_t *pBuffer, uint32_t numBytes, uint32_t timeoutCount)
 {
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.hostUartInfo;
     int32_t status = -1;
     pUartInfo->isTxComplete = 0;
+    uint32_t waitCount = 0;
     if (hEvb != NULL)
     {
         status = MaxStartUartTxDMA(pUartInfo, pBuffer, numBytes);
-        while (pUartInfo->isTxComplete == 0)
+        while ((pUartInfo->isTxComplete == 0) && (waitCount < timeoutCount))
         {
+            waitCount++;
+        }
+        if (waitCount == timeoutCount)
+        {
+            status = 1;
         }
     }
     return status;
 }
 
-int32_t EvbStartHostUartTxAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbHostUartTransmitAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
 {
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.hostUartInfo;
     int32_t status = -1;
@@ -182,18 +194,18 @@ int32_t EvbPutBufferNb(uint8_t *pBuffer, uint32_t numBytes)
 {
     int32_t status;
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.hostUartInfo;
-    status = EvbStartHostUartTxAsync((void *)pUartInfo, pBuffer, numBytes);
+    status = EvbHostUartTransmitAsync((void *)pUartInfo, pBuffer, numBytes);
     // FIXME : Without delay control sequences are displaying in raw message.
     MXC_Delay(MXC_DELAY_MSEC(1));
     return status;
 }
 
-int32_t EvbPutBuffer(uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbPutBuffer(uint8_t *pBuffer, uint32_t numBytes, uint32_t timeoutCount)
 {
     int32_t status;
     MAX_UART_INSTANCE *pUartInfo = &evbUartInfo.hostUartInfo;
 
-    status = EvbStartHostUartTx((void *)pUartInfo, pBuffer, numBytes);
+    status = EvbHostUartTransmit((void *)pUartInfo, pBuffer, numBytes, timeoutCount);
     // FIXME : Without delay control sequences are displaying in raw message.
     MXC_Delay(MXC_DELAY_MSEC(1));
     return status;

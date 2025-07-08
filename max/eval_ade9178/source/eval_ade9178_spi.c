@@ -70,7 +70,7 @@ int32_t EvbInitSpi(void **phSpi, ADI_EVB_SPI_CONFIG *pConfig)
     return status;
 }
 
-int32_t EvbStartAdeSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes)
+int32_t EvbAdeSpiTransmitAsync(void *hEvb, uint8_t *pData, uint32_t numBytes)
 {
     int32_t status = -1;
     MAX_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adeSpiInfo;
@@ -81,7 +81,7 @@ int32_t EvbStartAdeSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes)
 
     return status;
 }
-int32_t EvbStartAdeSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes)
+int32_t EvbAdeSpiReceiveAsync(void *hEvb, uint8_t *pData, uint32_t numBytes)
 {
     int32_t status = -1;
     MAX_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adeSpiInfo;
@@ -92,7 +92,7 @@ int32_t EvbStartAdeSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes)
 
     return status;
 }
-int32_t EvbSetAdeSpiFrequency(void *hEvb, uint32_t spiFrequency)
+int32_t EvbAdeSpiSetFrequency(void *hEvb, uint32_t spiFrequency)
 {
     int32_t status = -1;
     MAX_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adeSpiInfo;

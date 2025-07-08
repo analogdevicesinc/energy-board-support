@@ -126,7 +126,7 @@ int32_t EvbFlushMessages(void)
     /* Do not flush until previous transfer is complete*/
     if ((msgBytesStored > 0) && (isTxComplete == true))
     {
-        EvbStartHostUartTxAsync(&dummyUartData, pBufferToWrite, msgBytesStored);
+        EvbHostUartTransmitAsync(&dummyUartData, pBufferToWrite, msgBytesStored);
         if (bufId == 0)
         {
             pBufferToWrite = &messageBuffer1[0];

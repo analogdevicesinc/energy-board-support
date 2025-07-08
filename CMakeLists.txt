@@ -13,42 +13,28 @@ option(USE_FREERTOS "CompileFreeRTOS sources" OFF)
 option(ZEPHYR_BUILD "Build app with Zephyr" OFF)
 option(USE_IIO "Compile IIO board_support sources" OFF)
 
-## Add project symbols (macros)
-if(BUILD_TARGET MATCHES "stm32h573zi")
-	target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
-		STM32H573xx
-		$<$<CONFIG:Debug>:DEBUG>
-	)
-elseif(BUILD_TARGET MATCHES "stm32h735ig")
-	target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC
-		STM32H735xx
-		$<$<CONFIG:Debug>:DEBUG>
-	)
-endif()
-
 #Needed to print variables in cmake
 include(CMakePrintHelpers)
-
-if(BUILD_TARGET MATCHES "stm32h573zi")
-	add_subdirectory(${BSP_ROOT_DIR}/stm/crane_app_mcu
-		 			 ${CMAKE_BINARY_DIR}/stm32h573zi)
-	target_link_libraries(board_support INTERFACE stm32h573zi)
-elseif(BUILD_TARGET MATCHES "stm32h735ig")
-	add_subdirectory(${BSP_ROOT_DIR}/stm/h7_mcu_board
-		 			 ${CMAKE_BINARY_DIR}/stm32h735ig)
-	target_link_libraries(board_support INTERFACE stm32h735ig)
-elseif(BUILD_TARGET MATCHES "stm32h563zi")
+if(EVB MATCHES "app_mcu_h5")
+	add_subdirectory(${BSP_ROOT_DIR}/stm/app_mcu_h5
+		 			 ${CMAKE_BINARY_DIR}/app_mcu_h5)
+	target_link_libraries(board_support INTERFACE app_mcu_h5)
+elseif(EVB MATCHES "app_mcu_h7")
+	add_subdirectory(${BSP_ROOT_DIR}/stm/app_mcu_h7
+		 			 ${CMAKE_BINARY_DIR}/app_mcu_h7)
+	target_link_libraries(board_support INTERFACE app_mcu_h7)
+elseif(EVB MATCHES "nucleo_h563zi")
 	add_subdirectory(${BSP_ROOT_DIR}/stm/nucleo_h563zi_master
-		 			 ${CMAKE_BINARY_DIR}/stm32h563zi)
-	target_link_libraries(board_support INTERFACE stm32h563zi)
-elseif(BUILD_TARGET MATCHES "max32670")
+		 			 ${CMAKE_BINARY_DIR}/nucleo_h563zi)
+	target_link_libraries(board_support INTERFACE nucleo_h563zi)
+elseif(EVB MATCHES "eval_ade9178")
 	add_subdirectory(${BSP_ROOT_DIR}/max/eval_ade9178
-		 			 ${CMAKE_BINARY_DIR}/max32670)
-	target_link_libraries(board_support INTERFACE max32670)
+		 			 ${CMAKE_BINARY_DIR}/eval_ade9178)
+	target_link_libraries(board_support INTERFACE eval_ade9178)
 else()
 	add_subdirectory(${BSP_ROOT_DIR}/stm/nucleo_h563zi_master
-		 			 ${CMAKE_BINARY_DIR}/stm32h563zi)
-	target_link_libraries(board_support INTERFACE stm32h563zi)
+		 			 ${CMAKE_BINARY_DIR}/nucleo_h563zi)
+	target_link_libraries(board_support INTERFACE nucleo_h563zi)
 endif()
 
 if(USE_FREERTOS)
@@ -60,7 +46,7 @@ elseif(ZEPHYR_BUILD)
 	set(GENERIC_SRC ${BSP_ROOT_DIR}/stm/nucleo_h563zi_master/source/zephyr_delay.c)
 else()
 	set(GENERIRTOS_INCLUDEC_INCLUDE "")
-	if(BUILD_TARGET MATCHES "stm32h563zi" OR BUILD_TARGET MATCHES "stm32h573zi" OR BUILD_TARGET MATCHES "stm32h735ig")
+	if(EVB MATCHES "nucleo_h563zi" OR EVB MATCHES "app_mcu_h5" OR EVB MATCHES "app_mcu_h7")
 		set(GENERIC_SRC ${BSP_ROOT_DIR}/stm/source/stm_delay.c)
 	endif()
 endif()
@@ -71,8 +57,7 @@ target_include_directories(board_support INTERFACE
 )
 
 message("Just a bunch of debug statements:")
-cmake_print_variables(USE_IIO)
-cmake_print_variables(BUILD_TARGET)
+cmake_print_variables(EVB)
 cmake_print_variables(GENERIC_SRC)
 target_sources(board_support INTERFACE
 	${GENERIC_SRC}

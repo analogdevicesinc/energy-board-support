@@ -28,24 +28,24 @@ extern "C" {
 /** Maximum stored message size value */
 #define MAX_MSG_STORAGE_SIZE 1024 * 10
 /** Prints Info  Message as such without new line */
-#define INFO_MSG_RAW(...) PrintMessage("RAW", __VA_ARGS__);
+#define printf_raw(...) PrintMessage("RAW", __VA_ARGS__);
 /** Prints Info  Message */
-#define INFO_MSG(...) PrintMessage("", __VA_ARGS__);
+#define printf(...) PrintMessage("", __VA_ARGS__);
 /** Prints warn message */
-#define WARN_MSG(...) PrintMessage("Warn : ", __VA_ARGS__);
+#define printf_warn(...) PrintMessage("Warn : ", __VA_ARGS__);
 /** Prints error message */
-#define ERROR_MSG(...) PrintMessage("Error : ", __VA_ARGS__);
+#define printf_error(...) PrintMessage("Error : ", __VA_ARGS__);
 /** Prints debug message */
 #ifdef ENABLE_DEBUG
-#define DEBUG_MSG(...) PrintMessage("Debug : ", __VA_ARGS__);
+#define printf_debug(...) PrintMessage("Debug : ", __VA_ARGS__);
 #else
-#define DEBUG_MSG(...)
+#define printf_debug(...)
 #endif
 /** Prints debug message as such without new line */
 #ifdef ENABLE_DEBUG
-#define DEBUG_MSG_RAW(...) PrintMessage("DBGRAW", __VA_ARGS__);
+#define printf_debug_raw(...) PrintMessage("DBGRAW", __VA_ARGS__);
 #else
-#define DEBUG_MSG_RAW(...) NULL
+#define printf_debug_raw(...) NULL
 #endif
 
 /*============= F U N C T I O N  P R O T O T Y P E S =============*/

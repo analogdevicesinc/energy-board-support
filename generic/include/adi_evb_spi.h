@@ -34,7 +34,7 @@ extern "C" {
  *
  * @return  error or success
  */
-int32_t EvbStartAdeSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes);
+int32_t EvbAdeSpiTransmitAsync(void *hEvb, uint8_t *pData, uint32_t numBytes);
 
 /**
  * @brief SPI Rx API for ADE9178 Eval board
@@ -43,7 +43,7 @@ int32_t EvbStartAdeSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes);
  * @param[in]  numBytes  - num of bytes to receive
  * @return  error or success
  */
-int32_t EvbStartAdeSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes);
+int32_t EvbAdeSpiReceiveAsync(void *hEvb, uint8_t *pData, uint32_t numBytes);
 
 /**
  * @brief SPI Rx API for ADE9178 Eval board
@@ -54,7 +54,7 @@ int32_t EvbStartAdeSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes);
  * @return  error or success
  */
 
-int32_t EvbStartAdeSpiTxRxAsync(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes);
+int32_t EvbAdeSpiTransceiveAsync(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes);
 
 /**
  * @brief Start SPI TxRx in blocking mode. This function will block until the transfer is
@@ -66,19 +66,7 @@ int32_t EvbStartAdeSpiTxRxAsync(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, 
  * @param[in]  timeOutCount  - timeout count to wait in a blocking state.
  * @return  error or success
  */
-int32_t EvbStartAdeSpiTxRx(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes,
-                           uint32_t timeOutCount);
-
-/**
- * @brief Start SPI TXRx in blocking mode. This function will block until the transfer is complete.
- * @param[in]  hEvb - Evb handle obtained from EvbInit
- * @param[in]  pTxData  - pointer to the data to be received
- * @param[in]  pRxData  - pointer to the data to be received
- * @param[in]  numBytes  - num of bytes to receive
- * @param[in]  timeOutCount  - timeout count to wait in a blocking state.
- * @return  error or success
- */
-int32_t EvbStartFramSpiTxRx(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes,
+int32_t EvbAdeSpiTransceive(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes,
                             uint32_t timeOutCount);
 
 /**
@@ -87,25 +75,7 @@ int32_t EvbStartFramSpiTxRx(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint
  * @param[in]  spiFrequency  - frequency in Hz
  * @return  success or error
  */
-int32_t EvbSetAdeSpiFrequency(void *hEvb, uint32_t spiFrequency);
-
-/**
- * @brief Start Spi tx
- * @param[in]  hEvb - Evb handle obtained from EvbInit
- * @param[in] pData  - Pointer to data to transmit
- * @param[in] numBytes - num of bytes
- * @return status
- */
-int32_t EvbStartHostSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes);
-
-/**
- * @brief Start Spi tx
- * @param[in]  hEvb - Evb handle obtained from EvbInit
- * @param[in] pData  - Pointer to data to transmit
- * @param[in] numBytes - num of bytes
- * @return status
- */
-int32_t EvbStartHostSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes);
+int32_t EvbAdeSpiSetFrequency(void *hEvb, uint32_t spiFrequency);
 
 /**
  * @brief Abort spi
@@ -123,12 +93,12 @@ void EvbHostSpiIrqCallback(uint8_t aborted);
 /**
  * @brief Tx dma Callback
  */
-void EvbHostSpiTxIrqCallback(void);
+void EvbAdeSpiTransmitIrqCallback(void);
 
 /**
  * @brief Rx dma Callback
  */
-void EvbHostSpiRxIrqCallback(void);
+void EvbAdeSpiReceiveIrqCallback(void);
 
 /**
  * @brief Sets SPI freq
@@ -145,38 +115,10 @@ int32_t EvbSetAdcSpiFrequency(void *hEvb, uint32_t spiFrequency);
 void EvbAdcClearSpiInterrupt(void *hUser);
 
 /**
- * @brief FRAM SPI Tx API for ADE9178 Eval board
- * @param[in]  hEvb - Evb handle obtained from EvbInit
- * @param[in]  pData  - pointer to the data to be sent
- * @param[in]  numBytes  - num of bytes to send
- *
- * @return  error or success
- */
-int32_t EvbStartFramSpiTx(void *hEvb, uint8_t *pData, uint32_t numBytes);
-
-/**
- * @brief FRAM SPI Rx API for ADE9178 Eval board
- * @param[in]  hEvb - Evb handle obtained from EvbInit
- * @param[in]  pData  - pointer to the data to be received
- * @param[in]  numBytes  - num of bytes to receive
- * @return  error or success
- */
-int32_t EvbStartFramSpiRx(void *hEvb, uint8_t *pData, uint32_t numBytes);
-
-/**
- * @brief FRAM SPI Rx API for ADE9178 Eval board
- * @param[in]  hEvb - Evb handle obtained from EvbInit
- * @param[in]  pTxData  - pointer to the data to be received
- * @param[in]  pRxData  - pointer to the data to be received
- * @param[in]  numBytes  - num of bytes to receive
- * @return  error or success
- */
-int32_t EvbStartFramSpiTxRxAsync(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint32_t numBytes);
-
-/**
  * @brief Configure the GPIO pin for SPI chip select
  */
-void EvbSetSpiChipSelect(void);
+void EvbAdeSpiSetChipSelect(void);
+
 #ifdef __cplusplus
 }
 #endif
