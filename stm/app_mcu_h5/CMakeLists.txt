@@ -92,6 +92,9 @@ if (SUPPRESS_MSDK_WARNINGS)
     target_compile_options(hal_drivers INTERFACE -w)
 endif()
 
+# Suppress cast alignment warnings for CRC source file.
+set_source_files_properties(${CRC_SRC} PROPERTIES COMPILE_FLAGS "-Wno-cast-align")
+
 # Create a library for your board source files (warnings enabled)
 add_library(board_src INTERFACE)
 target_sources(board_src INTERFACE ${BOARD_SRC} ${STM_GEN_CODE_SRC} ${CRC_SRC})
