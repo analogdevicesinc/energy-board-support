@@ -1,6 +1,6 @@
  # Copyright (c) 2025  Analog Devices Inc
  
-  set(STM32CLT_PATH $ENV{STM32CLT_PATH})
+set(STM32CLT_PATH $ENV{STM32CLT_PATH})
 # Set default toolchain path, target and ldf file. User can override on command line
 
 if(EVB MATCHES "app_mcu_h5")
@@ -25,6 +25,7 @@ elseif(EVB MATCHES "app_mcu_h7")
   set(TARGET_FLAGS "-mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard " CACHE STRING "Target flags")
 endif()
 
+
 if(TOOLCHAIN MATCHES "armclang")
   include(${CMAKE_CURRENT_LIST_DIR}/armclang.cmake)
 elseif(TOOLCHAIN MATCHES "iar")
@@ -34,5 +35,18 @@ else()
   #Default to gcc-arm-none-eabi if no specific toolchain is set
   include(${CMAKE_CURRENT_LIST_DIR}/gcc-arm-none-eabi.cmake)
 endif()
+# Setup compiler settings
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
+# Enable compile command to ease indexing with e.g. clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+# Enable CMake support for ASM and C languages
+enable_language(C ASM)
+
+
 message(STATUS "EVB: ${EVB}")
-message(STATUS "Using toolchain path: ${TOOLCHAIN_PATH},  ${TOOLCHAIN}")
+message(STATUS "SDK: ${SDK}")
+message(STATUS "Toolchain: ${TOOLCHAIN_PATH},${TOOLCHAIN}")
+message(STATUS "Binary output path: ${CMAKE_CURRENT_BINARY_DIR}")
+

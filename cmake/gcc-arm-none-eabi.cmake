@@ -1,4 +1,3 @@
-
 # System and processor
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
@@ -43,3 +42,11 @@ set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,-Map=${CMAKE_PROJECT_NAME}.map
 set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--start-group -lc -lm -Wl,--end-group")
 set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--print-memory-usage")
 set(CMAKE_CXX_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--start-group -lstdc++ -lsupc++ -Wl,--end-group")
+
+macro(add_hex_generation target)
+    add_custom_command(TARGET ${target}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Generated HEX file: ${CMAKE_CURRENT_BINARY_DIR}/${target}.hex"
+        COMMAND ${CMAKE_OBJCOPY} -O ihex ${target}.elf ${target}.hex
+    )
+endmacro()
