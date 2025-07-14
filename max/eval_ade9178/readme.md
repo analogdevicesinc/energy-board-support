@@ -1,19 +1,4 @@
-# EVAL-ADE9178
-
-## Hardware Connections
-
-The EVAL-ADE9178 evaluation kit uses a MAX32670 Host MCU, which communicates with your PC via UART. To set up the hardware:
-
-1. **Connect Power and UART:**
-   - Use a micro-USB cable to connect your PC to the board's Micro-USB port (labelled VDD_USB).
-   - Ensure that jumpers P3 and P4 are populated on the board.
-
-2. **Install USB-UART Driver:**
-   - Download and install the CP2102 USB-UART driver from the [official Silicon Labs website](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers).
-   - Follow the installation instructions provided on the website.
-
-3. **Verify Connection:**
-   - After connecting, your PC should detect a new COM port (check Device Manager on Windows).
+# EVAL-ADE9178 :Build & Run Instructions
 
 
 ## Install Required Tools
@@ -23,6 +8,9 @@ The EVAL-ADE9178 evaluation kit uses a MAX32670 Host MCU, which communicates wit
    - **MAX3267x SDK:**
       - Download the [automatic installer](https://analogdevicesinc.github.io/msdk//USERGUIDE/#installation) for the MAX3267x SDK.
       - Follow the installation instructions in the user guide and configure any required environment variables (such as the `SDK` path).
+
+   -  USB-UART driver [CP2102, Universal Windows Driver](https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip)
+  
 
 ## Building the Project
    - Open a terminal and navigate to the firmware project directory where `CMakeLists.txt` is present.
@@ -38,7 +26,7 @@ The EVAL-ADE9178 evaluation kit uses a MAX32670 Host MCU, which communicates wit
    - The output `.hex` file will be generated in the `build/Release` directory.
 
 
-## Running the Project
+## Flashing the Hex File
 
 To flash the generated `.hex` file to the MAX32670 board, use a MAX32625PICO debug adapter and OpenOCD.
 
@@ -46,7 +34,23 @@ To flash the generated `.hex` file to the MAX32670 board, use a MAX32625PICO deb
    - Attach the MAX32625PICO ribbon cable to the SWD header on the EVAL-ADE9178 board.
    - Connect the MAX32625PICO to your PC via USB. A DAPLINK drive should appear in your file explorer.
 
-2. **Open a Terminal Program:**
+
+2. **Flash the Firmware:**
+   - Open a command prompt.
+   - Run the following command:
+     ```sh
+     "<MSDK Path>/Tools/OpenOCD/openocd.exe" -s "<MSDK Path>/Tools/OpenOCD/scripts" -f interface/cmsis-dap.cfg -f target/max32670.cfg -c "program \"<path_to_your_firmware.hex\" reset exit"
+     ```
+   - Replace `<MSDK Path>` and `<path_to_your_firmware.hex>` with the actual paths on your system.
+
+## Communicating with the Eval Board
+
+The  Board features an MAX32670 MCU that communicates with a PC via UART. To establish this UART connection:
+
+   - Connect a micro-USB cable to the board's Micro-USB port VDD_USB.
+   - Connect the other end of the micro-USB cable to your PC.
+   - Ensure that jumpers P3 and P4 are populated on the board.
+   - After connecting, your PC should detect a new COM port (check Device Manager on Windows).
    - Use a terminal application such as PuTTY or Tera Term.
    - Configure the connection with the following parameters:
      ```
@@ -57,16 +61,7 @@ To flash the generated `.hex` file to the MAX32670 board, use a MAX32625PICO deb
      Flow control : None
      ```
 
-3. **Flash the Firmware:**
-   - Open a command prompt.
-   - Run the following command:
-     ```sh
-     "<MSDK Path>/Tools/OpenOCD/openocd.exe" -s "<MSDK Path>/Tools/OpenOCD/scripts" -f interface/cmsis-dap.cfg -f target/max32670.cfg -c "program \"<path_to_your_firmware.hex\" reset exit"
-     ```
-   - Replace `<MSDK Path>` and `<path_to_your_firmware.hex>` with the actual paths on your system.
-
-
-### Debugging with VS Code Workspace
+## Debugging with VS Code Workspace
 
 The example projects may come with a pre-configured VS Code workspace for easy building and debugging.
 
