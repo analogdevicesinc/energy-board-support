@@ -149,6 +149,23 @@ int32_t EvbEnableDreadyIrq(uint8_t enable)
     return 0;
 }
 
+int32_t EvbCrcCalculate(void *hEvb, uint8_t *pData, uint32_t numBytes)
+{
+    (void)hEvb;     /* Dummy use of argument */
+    (void)pData;    /* Dummy use of argument */
+    (void)numBytes; /* Dummy use of argument */
+
+    return 0;
+}
+
+int32_t EvbCrcGetValue(void *hEvb, uint32_t *pData)
+{
+    (void)hEvb;  /* Dummy use of argument */
+    (void)pData; /* Dummy use of argument */
+
+    return 0;
+}
+
 /**
  * @}
  */
