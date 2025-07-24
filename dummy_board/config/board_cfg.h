@@ -70,6 +70,12 @@ extern "C" {
 #define BOARD_CFG_SYSTEM_TIMER_CLOCK_TYPE 0
 /**  Timer */
 #define BOARD_CFG_SYSTEM_TIMER 0
+/** Empty define - The EVK doesn't require a section attribute */
+#define SECTION(SECTION_NAME)
+/** Empty define - The EVK doesn't require DMA Buffer section for the linker */
+#define DMA_BUFFER
+/** Empty define - The EVK doesn't require FRAM Buffer section for the linker */
+#define FRAM_BUFFER
 
 #ifdef __cplusplus
 }

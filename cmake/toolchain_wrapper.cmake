@@ -19,6 +19,9 @@ elseif(EVB MATCHES "app_mcu_h7")
   include(${CMAKE_CURRENT_LIST_DIR}/st_tools.cmake)
   set(LD_FILE "${BOARD_SUPPORT_DIR}/stm/app_mcu_h7/stm_gen_code/stm32h735igkx_flash.ld" CACHE FILEPATH "Linker script")
   set(TARGET_FLAGS "-mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard " CACHE STRING "Target flags")
+elseif(EVB MATCHES "dummy_board")
+  include(${CMAKE_CURRENT_LIST_DIR}/gcc_tools.cmake)
+  set(TOOLCHAIN "gcc")
 endif()
 
 
@@ -26,6 +29,8 @@ if(TOOLCHAIN MATCHES "armclang")
   include(${CMAKE_CURRENT_LIST_DIR}/armclang.cmake)
 elseif(TOOLCHAIN MATCHES "iar")
   include(${CMAKE_CURRENT_LIST_DIR}/iar.cmake)
+elseif (TOOLCHAIN STREQUAL "gcc")
+  message("use gcc toolchain")
 else()
   set(TOOLCHAIN "gcc-arm-none-eabi")
   #Default to gcc-arm-none-eabi if no specific toolchain is set

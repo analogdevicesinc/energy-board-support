@@ -166,6 +166,10 @@ int32_t EvbCrcGetValue(void *hEvb, uint32_t *pData)
     return 0;
 }
 
+int32_t EvbGetTxStatus(void)
+{
+    return 1;
+}
 /**
  * @}
  */

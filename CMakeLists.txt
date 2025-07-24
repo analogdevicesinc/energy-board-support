@@ -25,6 +25,13 @@ elseif(EVB MATCHES "nucleo_h563zi")
 elseif(EVB MATCHES "eval_ade9178")
     add_subdirectory(${BSP_ROOT_DIR}/max/eval_ade9178 ${CMAKE_BINARY_DIR}/eval_ade9178)
     target_link_libraries(board_support INTERFACE eval_ade9178)
+elseif(EVB MATCHES "dummy_board")
+	set(DUMMY_SRC ${BSP_ROOT_DIR}/dummy_board/adi_evb.c)
+	set(DUMMY_INCLUDE ${BSP_ROOT_DIR}/generic/include
+					${BSP_ROOT_DIR}/dummy_board/config
+	   )
+	target_sources(board_support INTERFACE ${DUMMY_SRC})
+	target_include_directories(board_support INTERFACE ${DUMMY_INCLUDE})
 else()
     add_subdirectory(${BSP_ROOT_DIR}/stm/nucleo_h563zi_master ${CMAKE_BINARY_DIR}/nucleo_h563zi)
     target_link_libraries(board_support INTERFACE nucleo_h563zi)
