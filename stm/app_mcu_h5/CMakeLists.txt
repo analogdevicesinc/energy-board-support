@@ -31,7 +31,15 @@ else()
 endif()
 
 # Generated code sources
-set(STM_GEN_CODE_SRC
+if(TOOLCHAIN MATCHES "armclang")
+    set(GEN_CODE_SRC
+    ${STM32H573_ROOT_DIR}/stm_gen_code/stm32h5xx_hal_msp.c
+    ${STM32H573_ROOT_DIR}/stm_gen_code/stm32h5xx_it.c
+    ${STM32H573_ROOT_DIR}/armclang_gen_code/system_stm32h5xx.c
+    ${STM32H573_ROOT_DIR}/armclang_gen_code/startup_stm32h573xx.s
+    )
+elseif(TOOLCHAIN MATCHES "gcc-arm-none-eabi")
+    set(GEN_CODE_SRC
     ${STM32H573_ROOT_DIR}/stm_gen_code/stm32h5xx_hal_msp.c
     ${STM32H573_ROOT_DIR}/stm_gen_code/stm32h5xx_it.c
     ${STM32H573_ROOT_DIR}/stm_gen_code/system_stm32h5xx.c
@@ -39,6 +47,7 @@ set(STM_GEN_CODE_SRC
     ${STM32H573_ROOT_DIR}/stm_gen_code/sysmem.c
     ${STM32H573_ROOT_DIR}/stm_gen_code/syscalls.c
 )
+endif()
 
 # HAL driver sources
 set(STM32_HAL_FILES
@@ -81,15 +90,28 @@ set_source_files_properties(${CRC_SRC} PROPERTIES COMPILE_FLAGS "-Wno-cast-align
 
 # Create board source library
 add_library(board_src INTERFACE)
-target_sources(board_src INTERFACE ${BOARD_SRC} ${STM_GEN_CODE_SRC} ${CRC_SRC})
-target_compile_definitions(board_src INTERFACE
-    USE_HAL_DRIVER
-    STM32H573xx
-    $<$<CONFIG:Debug>:DEBUG>
-    STM32H573ZI
-    _USE_STD_INT_TYPES
-    EVB
-)
+target_sources(board_src INTERFACE ${BOARD_SRC} ${GEN_CODE_SRC} ${CRC_SRC})
+
+if(TOOLCHAIN MATCHES "armclang")
+    target_compile_definitions(board_src INTERFACE
+        # CMake applies target_compile_definitions to all source files (.c and .s) as -DEVB etc.
+        # But for armasm.exe, this is not a recognized option.
+        # So add compile definitions only for .c and .cpp files.
+        $<$<COMPILE_LANGUAGE:C>:STM32H573xx;STM32H573ZI;USE_HAL_DRIVER;EVB>
+        $<$<COMPILE_LANGUAGE:CXX>:STM32H573xx;STM32H573ZI;USE_HAL_DRIVER;EVB>
+        $<$<CONFIG:Debug>:$<$<COMPILE_LANGUAGE:C>:DEBUG>>
+        $<$<CONFIG:Debug>:$<$<COMPILE_LANGUAGE:CXX>:DEBUG>>
+    )
+elseif(TOOLCHAIN MATCHES "gcc-arm-none-eabi")
+    target_compile_definitions(board_src INTERFACE
+        USE_HAL_DRIVER
+        STM32H573xx
+        $<$<CONFIG:Debug>:DEBUG>
+        STM32H573ZI
+        _USE_STD_INT_TYPES
+        EVB
+    )
+endif()
 
 # Main target
 add_library(app_mcu_h5 INTERFACE)
