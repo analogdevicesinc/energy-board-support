@@ -1,4 +1,4 @@
-# App MCU Board: Build & Run Instructions
+# EVAL-ADEMA127: Build & Run Instructions
 
 
 ## Install Required Tools
@@ -42,9 +42,9 @@ You can flash the generated `.hex` file to the APP MCU board using a hardware de
      STM32_Programmer_CLI.exe -c port=SWD freq=4000 -d <path to .hex file> -g
      ```
 
-## Communicating with the Board
+## Communicating with the Eval Board
 
-The APP MCU Board features an STM32H573ZIT6 MCU that communicates with a PC via UART. To establish this UART connection:
+The Board features an STM32H573ZIT6 MCU that communicates with a PC via UART. To establish this UART connection:
 
    - Connect a micro-USB cable to the App MCU board's Micro-USB port.
    - Connect the other end of the micro-USB cable to your PC.
@@ -72,5 +72,7 @@ The example projects may come with a pre-configured VS Code workspace for easy b
 
 
 ## References
+- [EVAL-ADEMA127 Product Page](https://www.analog.com/en/resources/evaluation-hardware-and-software/evaluation-boards-kits/eval-adema127.html#eb-overview)
 - [STM32H563/573 Product Page](https://www.st.com/en/microcontrollers-microprocessors/stm32h563-573.html)
+- [STLINK-V3SET](https://www.st.com/en/development-tools/stlink-v3set.html)
 - [STM32CubeProgrammer software](https://www.st.com/en/development-tools/stm32cubeprog.html)

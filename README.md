@@ -6,8 +6,8 @@ The implementation relies on hardware abstraction layers (HALs) and MCU drivers 
 
 The supported boards are 
 
- - ADI STM32H5 App MCU Board - [Readme](stm/app_mcu_h5/readme.md)
- - ADI ADE9178-EVAL Board  - [Readme](max/eval_ade9178/readme.md)
+ - ADI EVAL-ADEMA127 Board - [Readme](stm/app_mcu_h5/readme.md)
+ - ADI EVAL-ADE9178 Board  - [Readme](max/eval_ade9178/readme.md)
 
 ## Repository Structure
 

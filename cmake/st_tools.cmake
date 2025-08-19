@@ -1,9 +1,12 @@
 #Update this if required. STM32CLT_PATH is normally set during installation of STM32CLT
 set(ARM_GCC_TOOLCHAIN_PATH "${STM32CLT_PATH}/GNU-tools-for-STM32/bin" CACHE PATH "ARm Gcc Toolchain path")
 set(ARM_CLANG_TOOLCHAIN_PATH "C:/Keil_v5/ARM/ARMCLANG/Bin" CACHE PATH "Keil Toolchain path")
+set(IAR_TOOLCHAIN_PATH "C:/iar/ewarm-9.70.1/arm" CACHE PATH "IAR Toolchain path")
 if(TOOLCHAIN MATCHES "gcc-arm-none-eabi")
     set(TOOLCHAIN_PATH ${ARM_GCC_TOOLCHAIN_PATH} CACHE PATH "Toolchain Path")
 elseif(TOOLCHAIN MATCHES "armclang")
     set(TOOLCHAIN_PATH ${ARM_CLANG_TOOLCHAIN_PATH} CACHE PATH "Toolchain Path")
+elseif(TOOLCHAIN MATCHES "iccarm")
+    set(TOOLCHAIN_PATH ${IAR_TOOLCHAIN_PATH} CACHE PATH "Toolchain Path")
 endif()
 set(SDK C:/STM32Cube/Repository/STM32Cube_FW_H5_V1.3.0/Drivers/STM32H5xx_HAL_Driver CACHE PATH "Path to STM32H5 Drivers directory")
