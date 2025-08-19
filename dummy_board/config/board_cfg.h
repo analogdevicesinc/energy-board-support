@@ -24,10 +24,14 @@ extern "C" {
 #define BOARD_CFG_ADECOMM_PORT 0
 /** Port for IRQ pins  */
 #define BOARD_CFG_ADEIRQ_PORT 0
+/** Port for ADC Dready pin  */
+#define BOARD_CFG_ADC_DREADY_PORT 0
 /** Number of port 0 GPIOs */
 #define BOARD_CFG_NUM_PORT0_GPIOS 8
 /** dummy macro */
 #define BOARD_CFG_MB85RS_PRODUCT_ID 0
+/** Pin drdy*/
+#define BOARD_CFG_ADC_DREADY_PIN 0x0
 /** Pin - HOST_RDY */
 #define BOARD_CFG_HOST_RDY_PIN 0
 /** Pin - HOST_ERR */
@@ -70,6 +74,12 @@ extern "C" {
 #define BOARD_CFG_SYSTEM_TIMER_CLOCK_TYPE 0
 /**  Timer */
 #define BOARD_CFG_SYSTEM_TIMER 0
+/** Empty define - The EVK doesn't require a section attribute */
+#define SECTION(SECTION_NAME)
+/** Empty define - The EVK doesn't require DMA Buffer section for the linker */
+#define DMA_BUFFER
+/** Empty define - The EVK doesn't require FRAM Buffer section for the linker */
+#define FRAM_BUFFER
 
 #ifdef __cplusplus
 }

@@ -5,40 +5,52 @@ project(app_mcu_h5 C)
 option(SUPPRESS_SDK_WARNINGS "Suppress warnings for Driver sources" ON)
 option(USE_HW_CRC "HW Crc Support" OFF)
 
-set(STM32H573_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
+if(NOT DEFINED BOARD_SUPPORT_DIR )
+    set(BOARD_SUPPORT_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
+endif()
+
 
 # Board source files
 set(BOARD_SRC
-    ${STM32H573_ROOT_DIR}/source/app_mcu_h5.c
-    ${STM32H573_ROOT_DIR}/source/app_mcu_h5_control.c
-    ${STM32H573_ROOT_DIR}/source/app_mcu_h5_gpio.c
-    ${STM32H573_ROOT_DIR}/source/app_mcu_h5_spi.c
-    ${STM32H573_ROOT_DIR}/../source/stm_spi.c
-    ${STM32H573_ROOT_DIR}/../source/stm_uart.c
-    ${STM32H573_ROOT_DIR}/../source/stm_i2c.c
-    ${STM32H573_ROOT_DIR}/../source/stm_timer.c
-    ${STM32H573_ROOT_DIR}/../source/stm32h563x_timer_config.c
-    ${STM32H573_ROOT_DIR}/../source/stm32h563x_uart_config.c
-    ${STM32H573_ROOT_DIR}/../source/stm32h563x_i2c_config.c
-    ${STM32H573_ROOT_DIR}/../source/stm32h563xx_spi_config.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/source/app_mcu_h5.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/source/app_mcu_h5_control.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/source/app_mcu_h5_gpio.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/source/app_mcu_h5_spi.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm_spi.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm_uart.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm_i2c.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm_timer.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_timer_config.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_uart_config.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_i2c_config.c
+    ${BOARD_SUPPORT_DIR}/stm/source/stm32h563xx_spi_config.c
 )
 
 # CRC source file
 if(USE_CRC AND USE_HW_CRC)
-    set(CRC_SRC ${STM32H573_ROOT_DIR}/../source/stm_crc.c)
+    set(CRC_SRC ${BOARD_SUPPORT_DIR}/stm/source/stm_crc.c)
 else()
     set(CRC_SRC "")
 endif()
 
 # Generated code sources
-set(STM_GEN_CODE_SRC
-    ${STM32H573_ROOT_DIR}/stm_gen_code/stm32h5xx_hal_msp.c
-    ${STM32H573_ROOT_DIR}/stm_gen_code/stm32h5xx_it.c
-    ${STM32H573_ROOT_DIR}/stm_gen_code/system_stm32h5xx.c
-    ${STM32H573_ROOT_DIR}/stm_gen_code/startup_stm32h573xx.s
-    ${STM32H573_ROOT_DIR}/stm_gen_code/sysmem.c
-    ${STM32H573_ROOT_DIR}/stm_gen_code/syscalls.c
+if(TOOLCHAIN MATCHES "armclang")
+    set(GEN_CODE_SRC
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/stm32h5xx_hal_msp.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/stm32h5xx_it.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/armclang_gen_code/system_stm32h5xx.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/armclang_gen_code/startup_stm32h573xx.s
+    )
+elseif(TOOLCHAIN MATCHES "gcc-arm-none-eabi")
+    set(GEN_CODE_SRC
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/stm32h5xx_hal_msp.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/stm32h5xx_it.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/system_stm32h5xx.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/startup_stm32h573xx.s
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/sysmem.c
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code/syscalls.c
 )
+endif()
 
 # HAL driver sources
 set(STM32_HAL_FILES
@@ -81,23 +93,36 @@ set_source_files_properties(${CRC_SRC} PROPERTIES COMPILE_FLAGS "-Wno-cast-align
 
 # Create board source library
 add_library(board_src INTERFACE)
-target_sources(board_src INTERFACE ${BOARD_SRC} ${STM_GEN_CODE_SRC} ${CRC_SRC})
-target_compile_definitions(board_src INTERFACE
-    USE_HAL_DRIVER
-    STM32H573xx
-    $<$<CONFIG:Debug>:DEBUG>
-    STM32H573ZI
-    _USE_STD_INT_TYPES
-    EVB
-)
+target_sources(board_src INTERFACE ${BOARD_SRC} ${GEN_CODE_SRC} ${CRC_SRC})
+
+if(TOOLCHAIN MATCHES "armclang")
+    target_compile_definitions(board_src INTERFACE
+        # CMake applies target_compile_definitions to all source files (.c and .s) as -DEVB etc.
+        # But for armasm.exe, this is not a recognized option.
+        # So add compile definitions only for .c and .cpp files.
+        $<$<COMPILE_LANGUAGE:C>:STM32H573xx;STM32H573ZI;USE_HAL_DRIVER;EVB>
+        $<$<COMPILE_LANGUAGE:CXX>:STM32H573xx;STM32H573ZI;USE_HAL_DRIVER;EVB>
+        $<$<CONFIG:Debug>:$<$<COMPILE_LANGUAGE:C>:DEBUG>>
+        $<$<CONFIG:Debug>:$<$<COMPILE_LANGUAGE:CXX>:DEBUG>>
+    )
+elseif(TOOLCHAIN MATCHES "gcc-arm-none-eabi")
+    target_compile_definitions(board_src INTERFACE
+        USE_HAL_DRIVER
+        STM32H573xx
+        $<$<CONFIG:Debug>:DEBUG>
+        STM32H573ZI
+        _USE_STD_INT_TYPES
+        EVB
+    )
+endif()
 
 # Main target
 add_library(app_mcu_h5 INTERFACE)
 target_include_directories(app_mcu_h5 INTERFACE
-    ${STM32H573_ROOT_DIR}/include
-    ${STM32H573_ROOT_DIR}/../include
-    ${STM32H573_ROOT_DIR}/stm_gen_code
-    ${STM32H573_ROOT_DIR}/include/config
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/include
+    ${BOARD_SUPPORT_DIR}/stm/include
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/stm_gen_code
+    ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/include/config
     ${SDK}/Inc
     ${SDK}/Inc/Legacy
     ${SDK}/../CMSIS/Device/ST/STM32H5xx/Include

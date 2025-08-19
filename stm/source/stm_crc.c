@@ -17,7 +17,6 @@
 #include "stm32h7xx_it.h"
 #else
 #include "stm32h5xx_hal.h"
-#include "stm32h5xx_hal_crc.h"
 #include "stm32h5xx_it.h"
 #endif
 

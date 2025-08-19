@@ -1,4 +1,4 @@
-# EVAL-ADE9178 :Build & Run Instructions
+# EVAL-ADE9178: Build & Run Instructions
 
 
 ## Install Required Tools
