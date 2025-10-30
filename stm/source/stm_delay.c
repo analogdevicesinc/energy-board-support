@@ -10,7 +10,10 @@
 /*=============  I N C L U D E S   =============*/
 
 #include "adi_evb.h"
-#ifdef STM32H735xx
+#if defined(STM32H7S3xx)
+#include "stm32h7rsxx.h"
+#include "stm32h7rsxx_hal.h"
+#elif defined(STM32H735xx)
 #include "stm32h7xx.h"
 #include "stm32h7xx_hal.h"
 #else

@@ -1,0 +1,5 @@
+{
+    "device": "STM32H573ZITx",
+    "deviceSvd": "STM32H573.svd",
+    "portArgs": "1",
+}

@@ -29,6 +29,9 @@
 #include "met_cf_pulse.h"
 #include "stm32h563xx_timer_config.h"
 #endif
+
+/* Private inc */
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -76,6 +79,10 @@ extern UART_HandleTypeDef hUART;
 #if APP_CFG_ENABLE_DISPLAY == 1
 extern I2C_HandleTypeDef hI2C;
 #endif
+#if APP_CFG_ENABLE_HOST_USB == 1
+extern PCD_HandleTypeDef hUsbFs;
+#endif
+
 extern DMA_HandleTypeDef hAdcDMASPITx;
 extern DMA_HandleTypeDef hAdcDMASPIRx;
 extern DMA_HandleTypeDef hFramDMASPITx;
@@ -287,20 +294,19 @@ void UART5_IRQHandler(void)
 }
 
 
-/**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
-void Error_Handler(void)
+void USB_DRD_FS_IRQHandler(void)
 {
-    /* USER CODE BEGIN Error_Handler_Debug */
-    /* User can add his own implementation to report the HAL error return state */
-    /* Toggle LED3 for error */
-    while (1)
-    {
-        HAL_Delay(1000);
-    }
+#if APP_CFG_ENABLE_HOST_USB == 1
+  /* USER CODE BEGIN USB_DRD_FS_IRQn 0 */
+
+  /* USER CODE END USB_DRD_FS_IRQn 0 */
+  HAL_PCD_IRQHandler(&hUsbFs);
+  /* USER CODE BEGIN USB_DRD_FS_IRQn 1 */
+
+  /* USER CODE END USB_DRD_FS_IRQn 1 */
+#endif
 }
+
 
 #if APP_CFG_ENABLE_SPI == 1
 /**
@@ -436,3 +442,25 @@ void I2C2_ER_IRQHandler(void)
 }
 #endif
 /* USER CODE END 1 */
+#ifdef USE_SIMUL_ADC
+void TIM3_IRQHandler(void)
+{
+    EvbDataRdyTimerHandler();
+}
+#endif /* USE_SIMUL_ADC == 1 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  /* Toggle LED3 for error */
+  while(1)
+  {
+    HAL_Delay(1000);
+  }
+  /* USER CODE END Error_Handler_Debug */
+}

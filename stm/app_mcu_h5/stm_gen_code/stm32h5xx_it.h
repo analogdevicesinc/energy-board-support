@@ -61,6 +61,7 @@ void SPI6_IRQHandler(void);
 void UART5_IRQHandler(void);
 void TIM5_IRQHandler(void);
 void Error_Handler(void);
+void USB_DRD_FS_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 /* USER CODE END EFP */
 

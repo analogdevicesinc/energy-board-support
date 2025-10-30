@@ -47,6 +47,21 @@ elseif(EVB MATCHES "app_mcu_h7")
       set(LD_FILE "${CMAKE_CURRENT_LIST_DIR}/../stm/app_mcu_h7/stm_gen_code/stm32h735igkx_flash.ld" CACHE FILEPATH "Linker script")
     endif()
   set(TARGET_FLAGS "-mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard " CACHE STRING "Target flags")
+elseif(EVB MATCHES "nucleo_h7s3l8")
+  include(${CMAKE_CURRENT_LIST_DIR}/st_tools.cmake)
+  # For nucleo_h7s3l8, set up variables for both boot and app linker scripts
+  # Individual targets will use target_link_options to select the appropriate one
+  # Each target (boot/app) will explicitly set its own linker script
+  set(LD_FILE "" CACHE FILEPATH "No default linker script - targets set their own")
+  if(TOOLCHAIN MATCHES "armclang")
+      set(LD_FILE_BOOT "${CMAKE_CURRENT_LIST_DIR}/../stm/nucleo_h7s3l8/boot/armclang_gen_code/STM32H7S3L8HX_FLASH.sct" CACHE FILEPATH "Boot scatter file")
+      set(LD_FILE_APP "${CMAKE_CURRENT_LIST_DIR}/../stm/nucleo_h7s3l8/app/armclang_gen_code/STM32H7S3L8HX_ROMxspi2.sct" CACHE FILEPATH "App scatter file")
+      set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} --cpu Cortex-M7.fp.dp")
+  elseif(TOOLCHAIN MATCHES "gcc-arm-none-eabi")
+      set(LD_FILE_BOOT "${CMAKE_CURRENT_LIST_DIR}/../stm/nucleo_h7s3l8/boot/stm_gen_code/STM32H7S3L8HX_FLASH.ld" CACHE FILEPATH "Boot linker script")
+      set(LD_FILE_APP "${CMAKE_CURRENT_LIST_DIR}/../stm/nucleo_h7s3l8/app/stm_gen_code/STM32H7S3L8HX_ROMxspi2.ld" CACHE FILEPATH "App linker script")
+  endif()
+  set(TARGET_FLAGS "-mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard " CACHE STRING "Target flags")
 elseif(EVB MATCHES "dummy_board" OR EVB MATCHES "x86")
   include(${CMAKE_CURRENT_LIST_DIR}/x86_tools.cmake)
   if(TOOLCHAIN MATCHES "iccarm")
@@ -68,6 +83,8 @@ else()
   #Default to gcc-arm-none-eabi if no specific toolchain is set
   include(${CMAKE_CURRENT_LIST_DIR}/gcc-arm-none-eabi.cmake)
 endif()
+include(${CMAKE_CURRENT_LIST_DIR}/vs_code_files.cmake)
+
 # Setup compiler settings
 if(NOT TOOLCHAIN MATCHES "iccarm")
   #FIX ME: Current cmake version gives errors if c11 standard is enabled for iar compiler.

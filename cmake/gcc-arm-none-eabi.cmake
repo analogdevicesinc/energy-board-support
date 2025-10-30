@@ -34,7 +34,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-rtti -fno-exceptions -fno-threadsafe-
 # Target and linker flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_FLAGS}")
 set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} ${TARGET_FLAGS}")
-set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -T ${LD_FILE}")
+# Only add global linker script if LD_FILE is not empty
+# Some boards (like H7S3L8) set LD_FILE to empty and use target-specific linker scripts
+if(LD_FILE)
+    set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -T ${LD_FILE}")
+endif()
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -specs=nosys.specs")
 
 # Linker options

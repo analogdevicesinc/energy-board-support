@@ -70,12 +70,10 @@ int32_t EvbInit(void **phEvb, ADI_EVB_CONFIG *pConfig)
         status = EvbInitGpio(&pEvb->hGpio, &pConfig->gpioConfig);
     }
 #endif
-#if APP_CFG_ENABLE_HOST_UART == 1
     if (status == 0)
     {
-        status = EvbInitUart(&pEvb->hUart, &pConfig->uartConfig);
+        status = EvbInitHostComm(&pEvb->hHostComm, &pConfig->hostCommConfig);
     }
-#endif
 #if APP_CFG_ENABLE_HW_CRC == 1
     if (status == 0)
     {
@@ -101,6 +99,9 @@ int32_t EvbInit(void **phEvb, ADI_EVB_CONFIG *pConfig)
     }
 #endif
 
+#ifdef USE_SIMUL_ADC
+    EvbDataRdyTimerInit(&pConfig->gpioConfig);
+#endif
     if (status == 0)
     {
         *phEvb = &evbInfo;
@@ -168,6 +169,10 @@ HAL_StatusTypeDef SysClockConfig(void)
      * in the RCC_OscInitTypeDef structure.
      */
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+#if APP_CFG_ENABLE_HOST_USB == 1
+    RCC_OscInitStruct.OscillatorType |= RCC_OSCILLATORTYPE_HSI48;
+    RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
+#endif
     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLL1_SOURCE_HSE;

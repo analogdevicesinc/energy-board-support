@@ -122,11 +122,11 @@ int32_t EvbFlushMessages(void)
     static int32_t bufId = 0;
     int32_t isTxComplete;
 
-    isTxComplete = EvbGetTxStatus();
+    isTxComplete = EvbHostCommGetTxStatus();
     /* Do not flush until previous transfer is complete*/
     if ((msgBytesStored > 0) && (isTxComplete == true))
     {
-        EvbHostUartTransmitAsync(&dummyUartData, pBufferToWrite, msgBytesStored);
+        EvbHostCommTransmitAsync(&dummyUartData, pBufferToWrite, msgBytesStored);
         if (bufId == 0)
         {
             pBufferToWrite = &messageBuffer1[0];
@@ -139,7 +139,7 @@ int32_t EvbFlushMessages(void)
         bufId ^= 0x1;
         msgBytesStored = 0;
     }
-    isTxComplete = EvbGetTxStatus();
+    isTxComplete = EvbHostCommGetTxStatus();
     if ((isTxComplete == false) || (msgBytesStored > 0))
     {
         status = 1;
