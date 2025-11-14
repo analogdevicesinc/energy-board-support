@@ -4,11 +4,30 @@ project(app_mcu_h5 C)
 
 option(SUPPRESS_SDK_WARNINGS "Suppress warnings for Driver sources" ON)
 option(USE_HW_CRC "HW Crc Support" OFF)
+option(USE_USB "USB Support" OFF)
+option(USE_FREERTOS "FreeRTOS Support" OFF)
 
 if(NOT DEFINED BOARD_SUPPORT_DIR )
     set(BOARD_SUPPORT_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
 endif()
 
+
+if(USE_USB)
+set(HOST_COMM_SRC ${BOARD_SUPPORT_DIR}/stm/source/stm_usb.c
+                  ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_usb_config.c)
+if(USE_FREERTOS)
+list(APPEND HOST_COMM_SRC
+    ${BOARD_SUPPORT_DIR}/stm/source/stm_usb_freertos.c
+)
+else()
+list(APPEND HOST_COMM_SRC
+    ${BOARD_SUPPORT_DIR}/stm/source/stm_usb_baremetal.c
+)
+endif()
+else()
+set(HOST_COMM_SRC ${BOARD_SUPPORT_DIR}/stm/source/stm_uart.c
+                  ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_uart_config.c)
+endif()
 
 # Board source files
 set(BOARD_SRC
@@ -17,13 +36,13 @@ set(BOARD_SRC
     ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/source/app_mcu_h5_gpio.c
     ${BOARD_SUPPORT_DIR}/stm/app_mcu_h5/source/app_mcu_h5_spi.c
     ${BOARD_SUPPORT_DIR}/stm/source/stm_spi.c
-    ${BOARD_SUPPORT_DIR}/stm/source/stm_uart.c
     ${BOARD_SUPPORT_DIR}/stm/source/stm_i2c.c
     ${BOARD_SUPPORT_DIR}/stm/source/stm_timer.c
     ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_timer_config.c
-    ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_uart_config.c
     ${BOARD_SUPPORT_DIR}/stm/source/stm32h563x_i2c_config.c
     ${BOARD_SUPPORT_DIR}/stm/source/stm32h563xx_spi_config.c
+    ${BOARD_SUPPORT_DIR}/stm/source/data_rdy_timer_stm32h5.c
+    ${HOST_COMM_SRC}
 )
 
 # CRC source file
@@ -79,6 +98,9 @@ set(STM32_HAL_FILES
     ${SDK}/Src/stm32h5xx_hal_i2c.c
     ${SDK}/Src/stm32h5xx_hal_i2c_ex.c
     ${SDK}/Src/stm32h5xx_hal_lptim.c
+    ${SDK}/Src/stm32h5xx_hal_pcd.c
+    ${SDK}/Src/stm32h5xx_hal_pcd_ex.c
+    ${SDK}/Src/stm32h5xx_ll_usb.c
 )
 
 # Create HAL drivers library and suppress warnings if requested
@@ -129,4 +151,10 @@ target_include_directories(app_mcu_h5 INTERFACE
     ${SDK}/../CMSIS/Include
 )
 target_link_directories(app_mcu_h5 INTERFACE)
-target_link_libraries(app_mcu_h5 INTERFACE hal_drivers board_src)
+
+if(USE_USB)
+    add_subdirectory(${BOARD_SUPPORT_DIR}/stm/middleware ${CMAKE_BINARY_DIR}/middleware)
+    target_link_libraries(app_mcu_h5 INTERFACE hal_drivers mw_usbx_drivers board_src)
+else()
+    target_link_libraries(app_mcu_h5 INTERFACE hal_drivers board_src)
+endif()

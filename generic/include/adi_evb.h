@@ -15,6 +15,7 @@
 
 #include "adi_evb_crc.h"
 #include "adi_evb_gpio.h"
+#include "adi_evb_host_comm.h"
 #include "adi_evb_i2c.h"
 #include "adi_evb_spi.h"
 #include "adi_evb_timer.h"
@@ -51,6 +52,8 @@ extern "C" {
 /** Typedef for callbacks from EVB */
 typedef void (*ADI_EVB_CALLBACK)(void);
 /** Typedef for callbacks from EVB */
+typedef void (*ADI_EVB_HOST_RX_CALLBACK)(uint8_t *, uint32_t);
+/** Typedef for callbacks from EVB */
 typedef void (*ADI_EVB_GPIO_CALLBACK)(uint32_t port, uint32_t flag);
 /** Typedef for EVB status */
 typedef int32_t ADI_EVB_STATUS;
@@ -63,11 +66,19 @@ typedef struct
 {
     /** Wfs rx callback */
     ADI_EVB_CALLBACK pfWfsUartRxCallback;
-    /** Host Wfs rx callback */
-    ADI_EVB_CALLBACK pfHostUartRxCallback;
-    /** Host Wfs tx callback */
-    ADI_EVB_CALLBACK pfHostUartTxCallback;
 } ADI_EVB_UART_CONFIG;
+
+/**
+ * @brief Non-build time configuration for host communication
+ *  Use app_cfg.h for build time configuration
+ */
+typedef struct
+{
+    /** Host Wfs rx callback */
+    ADI_EVB_HOST_RX_CALLBACK pfRxCallback;
+    /** Host Wfs tx callback */
+    ADI_EVB_CALLBACK pfTxCallback;
+} ADI_EVB_HOST_COMM_CONFIG;
 
 /**
  * @brief CRC configuration structure
@@ -115,8 +126,8 @@ typedef struct
  */
 typedef struct
 {
-    /** uart config */
-    ADI_EVB_UART_CONFIG uartConfig;
+    /** Host communication config */
+    ADI_EVB_HOST_COMM_CONFIG hostCommConfig;
     /** spi config */
     ADI_EVB_SPI_CONFIG spiConfig;
     /** gpio config */
@@ -134,6 +145,8 @@ typedef struct
 {
     /** user spi handle */
     void *hSpi;
+    /** user uart handle */
+    void *hHostComm;
     /** user uart handle */
     void *hUart;
     /** user gpio handle */
@@ -168,11 +181,20 @@ ADI_EVB_STATUS EvbDelayMs(uint32_t delayMs);
 int32_t EvbInit(void **phEvb, ADI_EVB_CONFIG *pConfig);
 
 /**
- * @brief Initialises UART
- * @param[out] phUart - Pointer to store handle
+ * @brief Initializes host communication. Selects UART or USB based on configuration macros.
+ * @param[in] pHostComm - Pointer to store handle
  * @param[in] pConfig - Pointer configuration structure. This can be NULL if
  * there is nothing configure
 
+ * @return  error or success
+ */
+int32_t EvbInitHostComm(void **pHostComm, ADI_EVB_HOST_COMM_CONFIG *pConfig);
+
+/**
+ * @brief Initializes host UART communication.
+ * @param[out] phUart - Pointer to store handle
+ * @param[in] pConfig - Pointer configuration structure. This can be NULL if
+ * there is nothing configure
  * @return  error or success
  */
 int32_t EvbInitUart(void **phUart, ADI_EVB_UART_CONFIG *pConfig);
@@ -270,6 +292,12 @@ int32_t EvbNvmRead(void *hEvb, uint8_t *pSrc, uint8_t *pDst, uint32_t numBytes,
  * @return  error or success
  */
 int32_t EvbNvmErase(void *hEvb, uint32_t addr);
+
+/**
+ * @brief Starts data ready timer
+ *
+ */
+void EvbDataRdyStartTimer(void);
 
 #ifdef __cplusplus
 }

@@ -25,7 +25,9 @@
 #endif
 #include <stdint.h>
 #include <string.h>
-
+#ifdef USE_SIMUL_ADC
+#include "simul_adc.h"
+#endif
 /*=============  D E F I N I T I O N S  =============*/
 /** Evb spi info */
 typedef struct
@@ -47,6 +49,9 @@ DMA_HandleTypeDef hAdcDMASPITx;
 /** creating dma spirx instance*/
 DMA_HandleTypeDef hAdcDMASPIRx;
 static void AdeSpiTxRxCallBack(SPI_HandleTypeDef *hspi);
+#ifdef USE_SIMUL_ADC
+ADI_ADC_SIMUL_INFO adcSimulInfo;
+#endif
 
 /*============= F U N C T I O N S =============*/
 
@@ -86,6 +91,7 @@ int32_t EvbAdeSpiTransceive(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint
                             uint32_t timeOutCount)
 {
     int32_t status = -1;
+
     STM_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adcSpiInfo;
     uint32_t waitCount = 0;
     if (hEvb != NULL)
@@ -103,6 +109,17 @@ int32_t EvbAdeSpiTransceive(void *hEvb, uint8_t *pTxData, uint8_t *pRxData, uint
             {
                 status = 1;
             }
+            else
+            {
+#ifdef USE_SIMUL_ADC
+                ADI_ADC_STATUS adcSimulStatus = ADI_ADC_STATUS_SUCCESS;
+                adcSimulStatus = adi_adc_simul_Process(&adcSimulInfo, pTxData, pRxData, numBytes);
+                if (adcSimulStatus != ADI_ADC_STATUS_SUCCESS)
+                {
+                    status = 1;
+                }
+#endif
+            }
         }
         else
         {
@@ -117,6 +134,9 @@ int32_t EvbAdeSpiTransceiveAsync(void *hEvb, uint8_t *pTxData, uint8_t *pRxData,
 {
     int32_t status = -1;
     STM_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adcSpiInfo;
+    pSpiInfo->pTxData = pTxData;
+    pSpiInfo->pRxData = pRxData;
+    pSpiInfo->numBytes = numBytes;
     if (hEvb != NULL)
     {
         status = StmStartSpiTxRxDMA(pSpiInfo, pTxData, pRxData, numBytes);
@@ -198,6 +218,16 @@ void EvbAdeSpiSetChipSelect(void)
 
 void AdeSpiTxRxCallBack(SPI_HandleTypeDef *hspi)
 {
+
+    int32_t status = -1;
+    STM_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adcSpiInfo;
+    uint8_t *pTxData = pSpiInfo->pTxData;
+    uint8_t *pRxData = pSpiInfo->pRxData;
+    uint32_t numBytes = pSpiInfo->numBytes;
+    // dummy check
+    if (pTxData == NULL || pRxData == NULL || numBytes == 0 || status == -1)
+    {
+    }
     if (hspi != NULL)
     {
         STM_SPI_INSTANCE *pSpiInfo = &evbSpiInfo.adcSpiInfo;
@@ -213,6 +243,14 @@ void AdeSpiTxRxCallBack(SPI_HandleTypeDef *hspi)
             }
             else
             {
+#ifdef USE_SIMUL_ADC
+                int32_t adcSimulStatus = 0;
+                adcSimulStatus = adi_adc_simul_Process(&adcSimulInfo, pTxData, pRxData, numBytes);
+                if (adcSimulStatus != 0)
+                {
+                    status = 1;
+                }
+#endif
                 evbSpiInfo.pfAdeSpiRxCallback();
             }
         }
@@ -220,5 +258,13 @@ void AdeSpiTxRxCallBack(SPI_HandleTypeDef *hspi)
     }
 }
 
+#ifdef USE_SIMUL_ADC
+int32_t EvbConnectAdc(int32_t numAdc, ADI_ADC_TYPE *pAdcType)
+{
+    int32_t status = 0;
+    status = adi_adc_simul_Configure(&adcSimulInfo, numAdc, pAdcType);
+    return status;
+}
+#endif
 /**
  */

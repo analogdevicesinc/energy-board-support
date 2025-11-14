@@ -46,7 +46,12 @@ typedef struct
     uint16_t ssPin;
     /** port for slave select */
     GPIO_TypeDef *ssPort;
-
+    /** pointer to ADC simul tx data*/
+    uint8_t *pTxData;
+    /** pointer to ADC simul rx data*/
+    uint8_t *pRxData;
+    /** num of bytes of ADC simul data*/
+    uint32_t numBytes;
 } STM_SPI_INSTANCE;
 
 /**

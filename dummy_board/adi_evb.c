@@ -87,7 +87,7 @@ int32_t EvbDelayMs(uint32_t delayMs)
     return 0;
 }
 
-int32_t EvbHostUartTransmitAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
+int32_t EvbHostCommTransmitAsync(void *hEvb, uint8_t *pBuffer, uint32_t numBytes)
 {
     /* Not needed for ADC service.
     Only to transfer data to host*/
@@ -166,7 +166,7 @@ int32_t EvbCrcGetValue(void *hEvb, uint32_t *pData)
     return 0;
 }
 
-int32_t EvbGetTxStatus(void)
+int32_t EvbHostCommGetTxStatus(void)
 {
     return 1;
 }

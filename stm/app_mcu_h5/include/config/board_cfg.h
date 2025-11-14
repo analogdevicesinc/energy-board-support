@@ -160,6 +160,8 @@ extern "C" {
 #define DMA_BUFFER
 /** Empty define - The EVK doesn't require FRAM Buffer section for the linker */
 #define FRAM_BUFFER
+/** Empty define - The EVK doesn't require DMA Buffer section for the linker */
+#define DMA_BUFFER_2
 
 #ifdef __cplusplus
 }
